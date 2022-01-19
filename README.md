@@ -8,14 +8,11 @@ Gao, Ruiqi, et al. "Flow contrastive estimation of energy-based models." *Procee
 
 🔗link 1
 
-
 https://openaccess.thecvf.com/content_CVPR_2020/html/Gao_Flow_Contrastive_Estimation_of_Energy-Based_Models_CVPR_2020_paper.html
-
 
 🔗link 2
 
 https://arxiv.org/abs/1912.00589
-
 
 ## Introduction
 
@@ -39,8 +36,6 @@ One approach to estimate EBM is through [Noise Contrastive Estimation (NCE)]( ht
 
 <img src="https://latex.codecogs.com/svg.image?V(\theta)&space;=&space;\mathbb{E}_{x\sim&space;p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)&plus;q(x)}&space;&plus;&space;\mathbb{E}_{\tilde{x}\sim&space;q}\log\frac{q(\tilde{x})}{p_\theta(\tilde{x})&space;&plus;&space;q(\tilde{x})}." title="V(\theta) = \mathbb{E}_{x\sim p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)+q(x)} + \mathbb{E}_{\tilde{x}\sim q}\log\frac{q(\tilde{x})}{p_\theta(\tilde{x}) + q(\tilde{x})}." />
 
-
-
 ### FCE: Replace Noise in NCE with Flow
 
 In Flow Contrastive Estimation (FCE), we replace the noise <img src="https://latex.codecogs.com/svg.image?q(x)" title="q(x)" /> with a flow model <img src="https://latex.codecogs.com/svg.image?q_\alpha(x)" title="q_\alpha(x)" />, and jointly train the two models by iteratively maximizing and minimizing the posterior log-likelihood of the classification:
@@ -61,19 +56,19 @@ To train the model, do
 python train.py
 ```
 
-| Argument               | meaning                                                      |
-| ---------------------- | ------------------------------------------------------------ |
-| `--seed=42`            | random seed                                                  |
-| `--epoch=100`          | training epoch                                               |
-| `--flow=glow`          | `glow` or `maf` to use as the flow model                     |
-| `--threshold=0.6`      | threshold for alternate training                             |
-| `--batch=1000`         | batch size                                                   |
+| Argument               | meaning                                                                                                                          |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `--seed=42`            | random seed                                                                                                                      |
+| `--epoch=100`          | training epoch                                                                                                                   |
+| `--flow=glow`          | `glow` or `maf` to use as the flow model                                                                                         |
+| `--threshold=0.6`      | threshold for alternate training                                                                                                 |
+| `--batch=1000`         | batch size                                                                                                                       |
 | `--dataset=8gaussians` | Available datasets:<br />- `8gaussians`<br />- `spiral`<br />- `2spirals`<br />- `checkerboard`<br />- `rings`<br />- `pinwheel` |
-| `--samples=500000`     | training set size                                            |
-| `--lr_ebm=1e-3`        | Adam learning rate for EBM                                   |
-| `--lr_flow=7e-4`       | Adam learning rate for Flow model                            |
-| `--b1=0.9`             | Adam gradient decay                                          |
-| `--b2=0.999`           | Adam gradient decay                                          |
+| `--samples=500000`     | training set size                                                                                                                |
+| `--lr_ebm=1e-3`        | Adam learning rate for EBM                                                                                                       |
+| `--lr_flow=7e-4`       | Adam learning rate for Flow model                                                                                                |
+| `--b1=0.9`             | Adam gradient decay                                                                                                              |
+| `--b2=0.999`           | Adam gradient decay                                                                                                              |
 
 ### Install wandb
 
@@ -91,25 +86,23 @@ When you start running your experiment, you may be asked to login. You simply pa
 
 Otherwise, if you do not wish to use it, you can comment out all the `wandb` part in [train.py](train.py).
 
-
-
 ## Visualizations
 
 ### Density Plots
 
 The figure below shows result of Flow Contrastive Estimation, using MAF as the flow model. The left column has three data distributions. The middle column shows densities learned by MAF. Note that they are also the densities that the energy model is trying to distinguish from the true densities. The right column shows densities learned by EBM.
 
-![fce-maf](imgs/fce-maf.png)
+<img src="imgs/fce-maf.png" title="" alt="fce-maf" width="493">
 
 For reference, here is the result presented in the FCE paper, showing learned Glow and EBM densities on three data distributions.
 
-![fce-glow](imgs/fce-glow.png)
+<img src="imgs/fce-glow.png" title="" alt="fce-glow" width="493">
 
 ### MSE
 
 In case of the 8 Gaussian dataset, we have an analytical formula for the true data distribution. We can evaluate the MSE of the log density learned by the energy model versus the true data distribution. The plot below shows the MSE on the `8gaussians` training dataset. 
 
-![mse](imgs/mse.png)
+<img src="imgs/mse.png" title="" alt="mse" width="421">
 
 ### Value
 
@@ -117,10 +110,10 @@ The figure below shows the negative of the value function during training. If bo
 
 <img src="https://latex.codecogs.com/svg.image?-&space;V(\alpha,\theta)\approx&space;-\left(\log\frac{1}{2}&plus;\log\frac{1}{2}\right)&space;=&space;\log4&space;\approx&space;1.39." title="- V(\alpha,\theta)\approx -\left(\log\frac{1}{2}+\log\frac{1}{2}\right) = \log4 \approx 1.39." />
 
-![value](imgs/value.png)
+<img title="" src="imgs/value.png" alt="value" width="421">
 
 ### Accuracy
 
 In our experiment we choose `0.6` as the default threshold, and as we can see the classification accuracy of the EBM flucturates around 0.6.
 
-![acc](imgs/acc.png)
+<img src="imgs/acc.png" title="" alt="acc" width="421">
