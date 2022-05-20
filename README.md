@@ -20,7 +20,7 @@ The energy based model is implemented in file [ebm.py](ebm.py).
 
 ### NCE: Teach EBM to Classify Data and Noise
 
-One approach to estimate EBM is through [Noise Contrastive Estimation (NCE)]( http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf ). In NCE, the normalizing constant is treated as a trainable parameter, and the model parameters are estimated by training the EBM to classify data and noise. Let $p_{\mathrm{data}}(x)$ denote data distribution and let $q(x)$ denote some noise distribution. This amounts to maximize the following posterior log-likelihood of the classification:
+One approach to estimate EBM is through [Noise Contrastive Estimation (NCE)]( http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf ). In NCE, the normalizing constant is treated as a trainable parameter, and the model parameters are estimated by training the EBM to classify data and noise. Let $p\_{\mathrm{data}}(x)$ denote data distribution and let $q(x)$ denote some noise distribution. This amounts to maximize the following posterior log-likelihood of the classification:
 
 $$V(\theta) = \mathbb{E}\_{x\sim p\_{\text{data}}}\log\frac{p\_\theta(x)}{p\_\theta(x)+q(x)} + \mathbb{E}\_{\tilde{x}\sim q}\log\frac{q(\tilde{x})}{p\_\theta(\tilde{x}) + q(\tilde{x})}.$$
 
@@ -44,7 +44,7 @@ To train the model, do
 python train.py
 ```
 
-| Argument               | meaning                                                                                                                          |
+| Argument               | Meaning                                                                                                                          |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `--seed=42`            | random seed                                                                                                                      |
 | `--epoch=100`          | training epoch                                                                                                                   |
@@ -60,7 +60,7 @@ python train.py
 
 ### Install wandb
 
-To run the script you need to install [Weights & Biases (wandb)](https://wandb.ai/site) . It is an MLOps tool used to monitor the metrics during training. I find it very easy and convenient to use, and I encourage you to install and have a try as well. 
+To run the script you need to install [Weights & Biases (wandb)](https://wandb.ai/site). It is an MLOps tool used to monitor the metrics during training. I find it very easy and convenient to use, and I encourage you to install and have a try as well. 
 
 First, sign up on their website https://wandb.ai/site. You may use your GitHub account to sign up. Copy your API key.
 
