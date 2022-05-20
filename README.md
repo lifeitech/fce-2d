@@ -2,45 +2,33 @@
 
 This is an implementation of [Flow Contrastive Estimation](https://openaccess.thecvf.com/content_CVPR_2020/html/Gao_Flow_Contrastive_Estimation_of_Energy-Based_Models_CVPR_2020_paper.html) in PyTorch on 2D dataset.
 
-#### Reference
-
-Gao, Ruiqi, et al. "Flow contrastive estimation of energy-based models." *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*. 2020.
-
-🔗link 1
-
-https://openaccess.thecvf.com/content_CVPR_2020/html/Gao_Flow_Contrastive_Estimation_of_Energy-Based_Models_CVPR_2020_paper.html
-
-🔗link 2
-
-https://arxiv.org/abs/1912.00589
-
 ## Introduction
 
 ### Direct Estimation of Energy Model is Difficult
 
 Our problem is to estimate an energy based model (EBM)
 
-<img src="https://latex.codecogs.com/svg.image?p_\theta(x)&space;=&space;\frac{\exp[-f_\theta(x)]}{Z(\theta)}," title="p_\theta(x) = \frac{\exp[-f_\theta(x)]}{Z(\theta)}," alt="" width="173">
+$$p\_\theta(x) = \frac{\exp[-f\_\theta(x)]}{Z(\theta)}$$
 
 where 
 
-<img src="https://latex.codecogs.com/svg.image?Z(\theta)&space;=&space;\int\exp[-f_\theta(x)]dx" title="Z(\theta) = \int\exp[-f_\theta(x)]dx" />
+$$Z(\theta) = \int\exp[-f\_\theta(x)]dx$$
 
-is the normalizing constant. The energy mdoel specifies a probability distribution on data space. The normalizing constant is very difficult to calculate since we have to sum over an exponential number of configurations. 
+is the normalizing constant. The energy model specifies a probability distribution on data space. The normalizing constant is very difficult to calculate since we have to sum over an exponential number of configurations. 
 
 The energy based model is implemented in file [ebm.py](ebm.py).
 
 ### NCE: Teach EBM to Classify Data and Noise
 
-One approach to estimate EBM is through [Noise Contrastive Estimation (NCE)]( http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf ). In NCE, the normalizing constant is treated as a trainable parameter, and the model parameters are estimated by training the EBM to classify data and noise. Let <img src="https://latex.codecogs.com/svg.image?p_{\mathrm{data}}(x)" title="p_{\mathrm{data}}(x)" /> denote data distribution and let <img src="https://latex.codecogs.com/svg.image?q(x)" title="q(x)" /> denote some noise distribution. This amounts to maximize the following posterior log-likelihood of the classification:
+One approach to estimate EBM is through [Noise Contrastive Estimation (NCE)]( http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf ). In NCE, the normalizing constant is treated as a trainable parameter, and the model parameters are estimated by training the EBM to classify data and noise. Let $p_{\mathrm{data}}(x)$ denote data distribution and let $q(x)$ denote some noise distribution. This amounts to maximize the following posterior log-likelihood of the classification:
 
-<img src="https://latex.codecogs.com/svg.image?V(\theta)&space;=&space;\mathbb{E}_{x\sim&space;p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)&plus;q(x)}&space;&plus;&space;\mathbb{E}_{\tilde{x}\sim&space;q}\log\frac{q(\tilde{x})}{p_\theta(\tilde{x})&space;&plus;&space;q(\tilde{x})}." title="V(\theta) = \mathbb{E}_{x\sim p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)+q(x)} + \mathbb{E}_{\tilde{x}\sim q}\log\frac{q(\tilde{x})}{p_\theta(\tilde{x}) + q(\tilde{x})}." />
+$$V(\theta) = \mathbb{E}\_{x\sim p\_{\text{data}}}\log\frac{p\_\theta(x)}{p\_\theta(x)+q(x)} + \mathbb{E}\_{\tilde{x}\sim q}\log\frac{q(\tilde{x})}{p\_\theta(\tilde{x}) + q(\tilde{x})}.$$
 
-### FCE: Replace Noise in NCE with Flow
+### FCE: Replace Noise in NCE with Flow Model
 
-In Flow Contrastive Estimation (FCE), we replace the noise <img src="https://latex.codecogs.com/svg.image?q(x)" title="q(x)" /> with a flow model <img src="https://latex.codecogs.com/svg.image?q_\alpha(x)" title="q_\alpha(x)" />, and jointly train the two models by iteratively maximizing and minimizing the posterior log-likelihood of the classification:
+In Flow Contrastive Estimation (FCE), we replace the noise $q(x)$ with a flow model $q_\alpha(x)$, and jointly train the two models by iteratively maximizing and minimizing the posterior log-likelihood of the classification:
 
-<img src="https://latex.codecogs.com/svg.image?V(\alpha,\theta)&space;=&space;\mathbb{E}_{x\sim&space;p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)&plus;q_\alpha(x)}&space;&plus;&space;\mathbb{E}_{\tilde{x}\sim&space;q_\alpha}\log\frac{q_\alpha(\tilde{x})}{p_\theta(\tilde{x})&space;&plus;&space;q_\alpha(\tilde{x})}." title="V(\alpha,\theta) = \mathbb{E}_{x\sim p_{\text{data}}}\log\frac{p_\theta(x)}{p_\theta(x)+q_\alpha(x)} + \mathbb{E}_{\tilde{x}\sim q_\alpha}\log\frac{q_\alpha(\tilde{x})}{p_\theta(\tilde{x}) + q_\alpha(\tilde{x})}." />
+$$V(\alpha,\theta) = \mathbb{E}\_{x\sim p\_{\text{data}}}\log\frac{p\_\theta(x)}{p\_\theta(x)+q\_\alpha(x)} + \mathbb{E}\_{\tilde{x}\sim q\_\alpha}\log\frac{q\_\alpha(\tilde{x})}{p\_\theta(\tilde{x}) + q\_\alpha(\tilde{x})}.$$
 
 This objective is implemented as the `value` function in file [util.py](util.py). 
 
@@ -106,14 +94,18 @@ In case of the 8 Gaussian dataset, we have an analytical formula for the true da
 
 ### Value
 
-The figure below shows the negative of the value function during training. If both EBM <img src="https://latex.codecogs.com/svg.image?p_\theta" title="p_\theta" /> and Flow <img src="https://latex.codecogs.com/svg.image?q_\alpha" title="q_\alpha" /> are close to the data distribution <img src="https://latex.codecogs.com/svg.image?p_{\text{data}}" title="p_{\text{data}}" />, then <img src="https://latex.codecogs.com/svg.image?p_\theta\approx&space;q_\alpha\approx&space;p_{\text{data}}" title="p_\theta\approx q_\alpha\approx p_{\text{data}}" />and the value should be approximately
+The figure below shows the negative of the value function during training. If both EBM $p_\theta$ and Flow $q\_\alpha$ are close to the data distribution $p_{\text{data}}$, then $p\_\theta\approx q\_\alpha\approx p\_{\text{data}}$ and the value should be approximately
 
-<img src="https://latex.codecogs.com/svg.image?-&space;V(\alpha,\theta)\approx&space;-\left(\log\frac{1}{2}&plus;\log\frac{1}{2}\right)&space;=&space;\log4&space;\approx&space;1.39." title="- V(\alpha,\theta)\approx -\left(\log\frac{1}{2}+\log\frac{1}{2}\right) = \log4 \approx 1.39." />
+$$- V(\alpha,\theta)\approx -\left(\log\frac{1}{2}+\log\frac{1}{2}\right) = \log4 \approx 1.39.$$
 
 <img title="" src="imgs/value.png" alt="value" width="421">
 
 ### Accuracy
 
-In our experiment we choose `0.6` as the default threshold, and as we can see the classification accuracy of the EBM flucturates around 0.6.
+In our experiment we choose `0.6` as the default threshold, and as we can see the classification accuracy of the EBM fluctuates around 0.6.
 
 <img src="imgs/acc.png" title="" alt="acc" width="421">
+
+## Reference
+
+Gao, Ruiqi, et al. "Flow contrastive estimation of energy-based models." *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*. 2020.
